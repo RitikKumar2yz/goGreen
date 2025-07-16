@@ -5,25 +5,15 @@ import random from "random";
 
 const path = "./data.json";
 
-// 🔁 Updated date range: 5 July 2018 → 1 July 2025
-const START_DATE = moment("2018-07-05");
+// 🔁 New date range: 15 Jan 2018 → 1 July 2025
+const START_DATE = moment("2018-01-8");
 const END_DATE = moment("2025-07-01");
-
-const markCommit = (x, y) => {
-  const date = START_DATE.clone().add(x, "w").add(y, "d").format();
-
-  const data = { date };
-
-  jsonfile.writeFile(path, data, () => {
-    simpleGit().add([path]).commit(date, { "--date": date }).push();
-  });
-};
 
 const makeCommits = (n) => {
   if (n === 0) return simpleGit().push();
 
-  const x = random.int(0, 364);  
-  const y = random.int(0, 6);    
+  const x = random.int(0, 388); // ~388 weeks total
+  const y = random.int(0, 6);   // 0 to 6 days
 
   const date = START_DATE.clone().add(x, "w").add(y, "d");
 
@@ -35,8 +25,11 @@ const makeCommits = (n) => {
   const data = { date: formattedDate };
 
   jsonfile.writeFile(path, data, () => {
-    simpleGit().add([path]).commit(formattedDate, { "--date": formattedDate }, makeCommits.bind(this, --n));
+    simpleGit()
+      .add([path])
+      .commit(formattedDate, { "--date": formattedDate }, makeCommits.bind(this, --n));
   });
 };
 
- makeCommits(100);
+// 🟢 Number of commits (increase to fill contribution graph)
+makeCommits(1000);
